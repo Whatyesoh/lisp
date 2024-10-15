@@ -3,33 +3,21 @@ Parser = {}
 Parser.newAst = require("src/AST")
 local color = require("src/color")
 
-local operationTable = {
-    ["*"] = function(val1,val2)
-        return val1 * val2
-    end,
-    ["+"] = function(val1,val2)
-        return val1 + val2
-    end,
-    ["-"] = function(val1,val2)
-        return val1 - val2
-    end,
-    ["/"] = function(val1,val2)
-        return val1 / val2
-    end,
-    ["%"] = function(val1,val2)
-        return val1 % val2
-    end
-}
-
 local errorTable = {
     [1] = "Too many operations given",
-    [2] = "Unknown token"
+    [2] = "Unknown token",
+    [3] = "Too many arguments given",
+    [4] = "Too few arguments given",
+    [5] = "Incorrect argument type"
 }
 
 function ParseProgram(line)
     local tokens = SplitLine(line)
     if tokens[1] ~= "(" then
         return 0
+    end
+    for i,v in ipairs(tokens) do
+        --print(v)
     end
     return Parser.newAst(tokens,2,false)[1]
 end
@@ -57,7 +45,7 @@ function PrettyPrinter(tree,str)
             if testError == "" then
                 return ""
             end
-            newString = newString .. "  " .. PrettyPrinter(tree.values[i],str) .. ""
+            newString = newString .. "  " .. testError .. ""
         end
         newString = newString .. " \27[32m)\27[0m"
     end

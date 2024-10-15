@@ -25,9 +25,11 @@ local function newAst(tokens, index, isKnown)
             local token = tokens[i]
             if token == "(" then
                 loopCount = loopCount + 1
-                expressionData = newAst(tokens,i + 1,false)
-                self.values[valueCount] = expressionData[1]
-                valueCount = valueCount + 1
+                if loopCount == 1 then
+                    expressionData = newAst(tokens,i + 1,false)
+                    self.values[valueCount] = expressionData[1]
+                    valueCount = valueCount + 1
+                end
             elseif token == ")" then
                 if loopCount > 0 then
                     loopCount = loopCount - 1
@@ -36,17 +38,15 @@ local function newAst(tokens, index, isKnown)
                 end
             else
                 if loopCount == 0 then
-                    if CheckString(token,LiteralTypes.integer[1]) or CheckString(token,LiteralTypes.float[1]) or CheckString(token,LiteralTypes.str[1]) then
+                    if self.operation then
                         expressionData = newAst(tokens,i,true)
                         self.values[valueCount] = expressionData[1]
                         valueCount = valueCount + 1
-                    elseif CheckString(token,LiteralTypes.symbol[1]) then
+                    else
                         if self.operation then
                             return {1, 1}
                         end
                         self.operation = token
-                    else
-                        return {2,2}
                     end
                 end
             end

@@ -1,6 +1,7 @@
 require("src/AST")
 require("src/literals")
 require("src/parser")
+require("src/eval")
 local color = require("src/color")
 
 local printTime = false
@@ -15,12 +16,11 @@ function ProcessLine(line)
             return commandResult 
         end 
     elseif CheckString(line,LiteralTypes.expr[1]) then
-        local parsedCommand = (PrettyPrinter(ParseProgram(line),""))
-        if parsedCommand ~= "" then
-            io.write(parsedCommand)
-        else
+        local value = Eval(ParseProgram(line))
+        if value == "" then
             return 0
         end
+        io.write(value)
     else
         io.write(line)
     end
@@ -31,6 +31,15 @@ function ProcessLine(line)
 end
 
 function ProcessCommand(command)
+    if CheckString(command:sub(2,#command),LiteralTypes.expr[1]) then
+        local parsedCommand = (PrettyPrinter(ParseProgram(command:sub(2,#command)),""))
+        if parsedCommand ~= "" then
+            io.write(parsedCommand)
+        else
+            return 0
+        end
+    end
+
     if command == ".quit" or command == ".exit" then
         return 0
     end 
