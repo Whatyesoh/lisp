@@ -1,2 +1,6 @@
-( - 1 (* 2 (/ (+ 2 3) 2)))
-(substring "test" 2 232)
+.timing
+(print "test hi")
+.(print(> 1 0))
+(print( - 1 (* 2 (/ (+ 2 3) 2))))
+.(print (+ (input) 2))
+(print "test hi")

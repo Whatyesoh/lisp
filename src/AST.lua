@@ -11,6 +11,10 @@ local function newAst(tokens, index, isKnown)
     self.str = nil
     self.color = 0x74
 
+    if tokens[index] == "(" then
+        return 7
+    end
+
     if isKnown then
         self.value = tokens[index]
         self.values = {nil,nil}
@@ -27,7 +31,7 @@ local function newAst(tokens, index, isKnown)
                 loopCount = loopCount + 1
                 if loopCount == 1 then
                     expressionData = newAst(tokens,i + 1,false)
-                    self.values[valueCount] = expressionData[1]
+                    self.values[valueCount] = expressionData
                     valueCount = valueCount + 1
                 end
             elseif token == ")" then
@@ -40,11 +44,11 @@ local function newAst(tokens, index, isKnown)
                 if loopCount == 0 then
                     if self.operation then
                         expressionData = newAst(tokens,i,true)
-                        self.values[valueCount] = expressionData[1]
+                        self.values[valueCount] = expressionData
                         valueCount = valueCount + 1
                     else
                         if self.operation then
-                            return {1, 1}
+                            return 1
                         end
                         self.operation = token
                     end
@@ -53,7 +57,7 @@ local function newAst(tokens, index, isKnown)
         end
     end
 
-    return {self,errorNum}
+    return self
 end
 
 return newAst

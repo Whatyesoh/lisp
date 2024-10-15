@@ -6,7 +6,7 @@ local operationTable = {
     end,2,0,0,{LiteralTypes.integer[1],LiteralTypes.float[1]}},
     ["+"] = {function(vals)
         local val = vals[1]
-        for i=1,#vals-1 do val = val + vals[i] end
+        for i=2,#vals do val = val + vals[i] end
         return val
     end,2,0,0,{LiteralTypes.integer[1],LiteralTypes.float[1]}},
     ["-"] = {function(vals)
@@ -38,10 +38,18 @@ local operationTable = {
     end,2,2,0,{LiteralTypes.integer[1],LiteralTypes.float[1]}},
     ["concat"] = {function(vals)
         return string.sub(vals[1],2,string.len(vals[1])-1) .. string.sub(vals[2],2,string.len(vals[2])-1)
-    end,2,2,1,{LiteralTypes.str[1],LiteralTypes.str[1]}},
+    end,2,2,0,{LiteralTypes.char[1],LiteralTypes.str[1]}},
     ["substring"] = {function(vals)
         return string.sub(string.sub(vals[1],2,string.len(vals[1])-1),vals[2],vals[3])
-    end,3,3,1,{LiteralTypes.str[1],LiteralTypes.integer[1],LiteralTypes.integer[1]}}
+    end,3,3,1,{LiteralTypes.str[1],LiteralTypes.integer[1],LiteralTypes.integer[1]}},
+    ["print"] = {function(vals)
+        io.write(vals[1])
+        if not PrintTime then io.write("\n") end
+        return nil
+    end,1,1,0,{LiteralTypes.program[1]}},
+    ["input"] = {function(vals)
+        return io.read()
+    end,0,0,0,{}}
 }
 
 local function checkOperationTypes(operation,vals)
@@ -91,7 +99,10 @@ function Eval(tree)
         local vals = {}
         for i = 1,#tree.values do
             local testError = Eval(tree.values[i])
-            if testError == "" then
+            if not testError then
+                ProcessErrors(6)
+                return ""
+            elseif testError == "" then
                 return ""
             end
             table.insert(vals,testError)

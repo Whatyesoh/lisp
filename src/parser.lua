@@ -8,7 +8,9 @@ local errorTable = {
     [2] = "Unknown token",
     [3] = "Too many arguments given",
     [4] = "Too few arguments given",
-    [5] = "Incorrect argument type"
+    [5] = "Incorrect argument type",
+    [6] = "Attempt to perform operation on nil",
+    [7] = "No operation given"
 }
 
 function ParseProgram(line)
@@ -19,7 +21,7 @@ function ParseProgram(line)
     for i,v in ipairs(tokens) do
         --print(v)
     end
-    return Parser.newAst(tokens,2,false)[1]
+    return Parser.newAst(tokens,2,false)
 end
 
 function ProcessErrors(errorNum)

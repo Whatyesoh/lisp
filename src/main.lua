@@ -4,7 +4,7 @@ require("src/parser")
 require("src/eval")
 local color = require("src/color")
 
-local printTime = false
+PrintTime = false
 local helpMessage = ".quit/.exit - end the program\n.help - list of commands and their functionsn\n.timing - print runtime for each line (toggle)"
 
 function ProcessLine(line)
@@ -20,11 +20,11 @@ function ProcessLine(line)
         if value == "" then
             return 0
         end
-        io.write(value)
+        if not PrintTime then return 1 end
     else
         io.write(line)
     end
-    if printTime then io.write(" ", string.format("%.2f",os.clock()-startTime),"s") end
+    if PrintTime then io.write(" ", color.fg(0x3c)..string.format("%.2f",os.clock()-startTime),"s",color.reset) end
         
     io.write("\n")
     return 1
@@ -45,8 +45,8 @@ function ProcessCommand(command)
     end 
 
     if command == ".timing" then
-        printTime = not printTime
-        if printTime then
+        PrintTime = not PrintTime
+        if PrintTime then
             io.write("Displaying Timings")
         else
             io.write("Done Displaying Timings")
@@ -68,10 +68,13 @@ end
 if arg[1] then
     local file = io.open(arg[1],"r")
     if file then
+        local lineCount = 1
         for line in file:lines() do
+            io.write(lineCount .. "| ")
             if ProcessLine(line) ~= 1 then
                 break
             end
+            lineCount = lineCount + 1
         end
     end
     io.close(file)
