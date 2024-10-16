@@ -10,7 +10,8 @@ local errorTable = {
     [4] = "Too few arguments given",
     [5] = "Incorrect argument type",
     [6] = "Attempt to perform operation on nil",
-    [7] = "No operation given"
+    [7] = "No operation given",
+    [8] = "Unknown operation"
 }
 
 function ParseProgram(line)

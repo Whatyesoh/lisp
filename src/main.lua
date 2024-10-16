@@ -15,7 +15,7 @@ function ProcessLine(line)
         if commandResult ~= 1 then 
             return commandResult 
         end 
-    elseif CheckString(line,LiteralTypes.expr[1]) then
+    elseif string.sub(line,1,1) == "(" and string.sub(line,string.len(line),string.len(line)) == ")" then
         local value = Eval(ParseProgram(line))
         if value == "" then
             return 0

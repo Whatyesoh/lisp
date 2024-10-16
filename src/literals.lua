@@ -10,6 +10,9 @@ LiteralTypes.literal = {"["..LiteralTypes.integer[1]..LiteralTypes.symbol[1].."]
 
 
 function IdentifyLiteral(str)
+    if not str then
+        return {}
+    end
     local typeMatches = {}
 
     for i,v in pairs(LiteralTypes) do

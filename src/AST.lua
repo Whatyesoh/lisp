@@ -5,6 +5,7 @@ local function newAst(tokens, index, isKnown)
     local errorNum = nil
     local self = setmetatable({},ast)
     self.value = nil
+    self.types = {}
     self.values = {nil,nil}
     self.operation = nil
     self.float = nil
@@ -19,6 +20,12 @@ local function newAst(tokens, index, isKnown)
         self.value = tokens[index]
         self.values = {nil,nil}
         self.operation = nil
+        self.types = IdentifyLiteral(self.value)
+        for i,v in ipairs(self.types) do
+            if v == 7 or v == 8 then
+                self.value = string.sub(self.value,2,#self.value-1)
+            end
+        end
     else
         self.value = nil
         local valueCount = 1
