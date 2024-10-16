@@ -11,7 +11,8 @@ local errorTable = {
     [5] = "Incorrect argument type",
     [6] = "Attempt to perform operation on nil",
     [7] = "No operation given",
-    [8] = "Unknown operation"
+    [8] = "Unknown operation",
+    [9] = "Can't assign value to protected variable"
 }
 
 function ParseProgram(line)

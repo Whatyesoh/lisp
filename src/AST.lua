@@ -1,3 +1,4 @@
+require("src/variables")
 local ast = {}
 ast.__index = ast
 
@@ -18,6 +19,9 @@ local function newAst(tokens, index, isKnown)
 
     if isKnown then
         self.value = tokens[index]
+        if Variables[self.value] then
+            self.value = Variables[self.value][1]
+        end
         self.values = {nil,nil}
         self.operation = nil
         self.types = IdentifyLiteral(self.value)

@@ -5,9 +5,11 @@ require("src/eval")
 local color = require("src/color")
 
 PrintTime = false
+PrintNewLine = true
 local helpMessage = ".quit/.exit - end the program\n.help - list of commands and their functionsn\n.timing - print runtime for each line (toggle)"
 
 function ProcessLine(line)
+    PrintNewLine = true
     local startTime = os.clock()
 
     if string.sub(line,1,1) == "." then
@@ -20,13 +22,12 @@ function ProcessLine(line)
         if value == "" then
             return 0
         end
-        if not PrintTime then return 1 end
     else
         io.write(line)
     end
     if PrintTime then io.write(" ", color.fg(0x3c)..string.format("%.2f",os.clock()-startTime),"s",color.reset) end
         
-    io.write("\n")
+    if PrintNewLine then io.write("\n") end
     return 1
 end
 

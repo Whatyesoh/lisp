@@ -44,10 +44,10 @@ local operationTable = {
     end,3,3,1,{7,1,1}},
     ["print"] = {function(vals)
         io.write(vals[1])
-        if not PrintTime then io.write("\n") end
         return nil
     end,1,1,0,{5}},
     ["input"] = {function(vals)
+        PrintNewLine = false
         return io.read()
     end,0,0,0,{}},
     ["tostring"] = {function(vals)
@@ -58,7 +58,13 @@ local operationTable = {
     end,1,1,0,{5}},
     ["unstring"] = {function(vals)
         return string.sub(vals[1],2,string.len(vals[1])-1)
-    end,1,1,0,{7}}
+    end,1,1,0,{7}},
+    ["upper"] = {function(vals)
+        return string.upper(vals[1])
+    end,1,1,0,{5}},
+    ["lower"] = {function(vals)
+        return string.lower(vals[1])
+    end,1,1,0,{5}}
 }
 
 local logicOperations = {
@@ -77,12 +83,19 @@ local logicOperations = {
         if val == 1 then
             return 1
         end
-        val = tonumber(Eval(vals[1])[1])
+        val = tonumber(Eval(vals[2])[1])
         if val == 1 then
             return 1
         end
         return 0
     end,2},
+    ["not"] = {function(vals)
+        local val = tonumber(Eval(vals[1])[1])
+        if val == 1 then
+            return 0
+        end
+        return 1
+    end,1},
     ["if"] = {function(vals)
         local val = tonumber(Eval(vals[1])[1])
         local evaluate
@@ -102,17 +115,15 @@ local logicOperations = {
 }
 
 local function checkOperationTypes(operation,vals,types)
-    --[[
     local check = false
     if operationTable[operation][4] == 0 then
         for j,k in ipairs(vals) do
             check = false
             for i,v in ipairs(operationTable[operation][5]) do
-                for l,m in ipairs(k) do
-                    
-                end
-                if CheckString(k,v) then
-                    check = true
+                for l,m in ipairs(types[j]) do
+                    if m == v then
+                        check = true
+                    end
                 end
             end
             if check == false then
@@ -121,14 +132,20 @@ local function checkOperationTypes(operation,vals,types)
         end
     else
         check = true
+        local check2 = false
         for i,v in ipairs(operationTable[operation][5]) do
-            if not CheckString(vals[i],v) then
+            check2 = false
+            for j,k in ipairs(types[i]) do
+                if k == v then
+                    check2 = true
+                end
+            end
+            if not check2 then
                 check = false
             end
         end
         return check
     end
-    --]]
     return true
 end
 
@@ -189,7 +206,16 @@ function Eval(tree)
             local result = operationTable[operation][1](vals)
             return {result,IdentifyLiteral(result)}
         else
-            if #tree.values == 0 then
+            if #tree.values == 1 then
+                if not Variables[operation] or Variables[operation][2] == 1 then
+                    Variables[operation] = {}
+                    table.insert(Variables[operation],Eval(tree.values[1])[1])
+                    table.insert(Variables[operation],1)
+                else
+                    ProcessErrors(9)
+                    return ""
+                end
+            else
                 ProcessErrors(8)
                 return ""
                 --return {operation,{IdentifyLiteral(operation)}}
